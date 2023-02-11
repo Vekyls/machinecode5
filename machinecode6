@@ -1,7 +1,7 @@
 if (_G.replayScriptRan) then return end;
 _G.replayScriptRan = true;
 
-local target = 'FLUFYalt'; -- Change this to your target's name.
+local target = 'khotxay132'; -- Change this to your target's name.
 local bindKey = {Enum.KeyCode.LeftControl, Enum.KeyCode.L}; -- By default it's left control + Q (qwerty) or (A) azerty.
 local bindKey2 = {Enum.KeyCode.LeftControl, Enum.KeyCode.Z}; -- By default it's left control + Z (qwerty) or (W) azerty.
 
