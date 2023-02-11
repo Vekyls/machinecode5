@@ -1,76 +1,118 @@
-if (_G.replayScriptRan) then return end;
+local function createTargetNameGui()
+    local gui = Instance.new("ScreenGui")
+	syn.protect_gui(gui)
+    local targetFrame = Instance.new("Frame")
+    local targetLabel = Instance.new("TextLabel")
+    local targetInput = Instance.new("TextBox")
+    local okButton = Instance.new("TextButton")
+    
+    gui.Name = "TargetNameGui"
+    gui.Parent = game.CoreGui
+    
+    targetFrame.Name = "TargetFrame"
+    targetFrame.Parent = gui
+    targetFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    targetFrame.Size = UDim2.new(0, 300, 0, 200)
+    
+    targetLabel.Name = "TargetLabel"
+    targetLabel.Parent = targetFrame
+    targetLabel.Position = UDim2.new(0, 0, 0, 20)
+    targetLabel.Size = UDim2.new(0, 300, 0, 40)
+    targetLabel.Text = "Enter target name:"
+    targetLabel.TextScaled = true
+    
+    targetInput.Name = "TargetInput"
+    targetInput.Parent = targetFrame
+    targetInput.Position = UDim2.new(0, 0, 0, 80)
+    targetInput.Size = UDim2.new(0, 200, 0, 40)
+    
+    okButton.Name = "OkButton"
+    okButton.Parent = targetFrame
+    okButton.Position = UDim2.new(0, 50, 0, 140)
+    okButton.Size = UDim2.new(0, 100, 0, 40)
+    okButton.Text = "OK"
+    
+    okButton.MouseButton1Click:Connect(function()
+        local target = targetInput.Text
+        targetFrame.Visible = false
+        
+        if (_G.replayScriptRan) then return end;
+
 _G.replayScriptRan = true;
 
-local target = 'B4dem'; -- Change this to your target's name.
+--local target = ''; -- Change this to your target's name.
 local bindKey = {Enum.KeyCode.LeftControl, Enum.KeyCode.Y}; -- By default it's left control + Q (qwerty) or (A) azerty.
 local bindKey2 = {Enum.KeyCode.LeftControl, Enum.KeyCode.Z}; -- By default it's left control + Z (qwerty) or (W) azerty.
 
 local Maid = {};
 
-do -- // Maid
-    Maid.ClassName = "Maid"
 
-    function Maid.new()
-        return setmetatable({
-            _tasks = {}
-        }, Maid)
-    end
 
-    function Maid.isMaid(value)
-        return type(value) == "table" and value.ClassName == "Maid"
-    end
+-- // Maid
+do
+	Maid.ClassName = "Maid"
 
-    function Maid.__index(self, index)
-        if Maid[index] then
-            return Maid[index]
-        else
-            return self._tasks[index]
-        end
-    end
+	function Maid.new()
+		return setmetatable({
+			_tasks = {}
+		}, Maid)
+	end
 
-    function Maid:__newindex(index, newTask)
-        if Maid[index] ~= nil then
-            error(("'%s' is reserved"):format(tostring(index)), 2)
-        end
+	function Maid.isMaid(value)
+		return type(value) == "table" and value.ClassName == "Maid"
+	end
 
-        local tasks = self._tasks
-        local oldTask = tasks[index]
+	function Maid.__index(self, index)
+		if Maid[index] then
+			return Maid[index]
+		else
+			return self._tasks[index]
+		end
+	end
 
-        if oldTask == newTask then
-            return
-        end
+	function Maid:__newindex(index, newTask)
+		if Maid[index] ~= nil then
+			error(("'%s' is reserved"):format(tostring(index)), 2)
+		end
 
-        tasks[index] = newTask
+		local tasks = self._tasks
+		local oldTask = tasks[index]
 
-        if oldTask then
-            if type(oldTask) == "function" then
-                oldTask()
-            elseif typeof(oldTask) == "RBXScriptConnection" then
-                oldTask:Disconnect()
-            elseif typeof(oldTask) == 'table' then
-                oldTask:Remove();
-            elseif oldTask.Destroy then
-                oldTask:Destroy()
-            end
-        end
-    end
+		if oldTask == newTask then
+			return
+		end
 
-    function Maid:GiveTask(task)
-        if not task then
-            error("Task cannot be false or nil", 2)
-        end
+		tasks[index] = newTask
 
-        local taskId = #self._tasks+1
-        self[taskId] = task
+		if oldTask then
+			if type(oldTask) == "function" then
+				oldTask()
+			elseif typeof(oldTask) == "RBXScriptConnection" then
+				oldTask:Disconnect()
+			elseif typeof(oldTask) == 'table' then
+				oldTask:Remove();
+			elseif oldTask.Destroy then
+				oldTask:Destroy()
+			end
+		end
+	end
 
-        if typeof(task) == 'table' and not task.Remove then
-            warn("[Maid.GiveTask] - Gave table task without .Remove\n\n" .. debug.traceback())
-        end
+	function Maid:GiveTask(task)
+		if not task then
+			error("Task cannot be false or nil", 2)
+		end
 
-        return taskId
-    end
+		local taskId = #self._tasks+1
+		self[taskId] = task
 
-    function Maid:DoCleaning()
+		if typeof(task) == 'table' and not task.Remove then
+			warn("[Maid.GiveTask] - Gave table task without .Remove\n\n" .. debug.traceback())
+		end
+
+		return taskId
+	end
+
+	function Maid:DoCleaning()
         local tasks = self._tasks
 
         for index, task in pairs(tasks) do
@@ -133,6 +175,13 @@ local function reverseTable(t)
 end;
 
 local function startRecording()
+
+	--I ADDED IT HERE IS IT CORRECT?
+
+	--targetInput.TextChanged:Connect(function(newValue)
+	--	target = newValue
+	--end)
+
 	table.clear(playerAnims);
 	table.clear(playerCF);
 
@@ -277,3 +326,10 @@ local function onInputBegan(inputObject, gpe)
 end;
 
 userInputService.InputBegan:Connect(onInputBegan);
+
+-- Add your code here to use the target value
+    end)
+end
+
+-- Call the function to create the GUI
+createTargetNameGui()
